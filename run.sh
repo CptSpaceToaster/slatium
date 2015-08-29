@@ -1,7 +1,7 @@
 #!/bin/bash
 while [ 1 ]
 do
-    ./main.py -s
+    ./main.py $*
 
     secs=$((5))
 
