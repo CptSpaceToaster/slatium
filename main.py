@@ -176,10 +176,10 @@ if __name__ == '__main__':
 
     for room in rooms:
         if 'marker' in cfg['rooms'][room]:
-            log('Found marker: ' + str(cfg['rooms'][room]['marker']))
+            log('[' + room + '] Found marker: ' + str(cfg['rooms'][room]['marker']))
         else:
             marker = str(int(time.time() * 1000))
-            log('Marker was missing, using epoch: ' + marker)
+            log('[' + room + '] Marker was missing, using epoch: ' + marker)
 
             cfg['rooms'][room]['marker'] = marker
             update_cfg()
