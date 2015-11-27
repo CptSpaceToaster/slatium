@@ -134,6 +134,9 @@ class initium_message_client():
                 continue
             msg = BeautifulSoup(message['message'], 'lxml')
             log('{0} - {1}: {2}'.format(group, name.text, msg.text))
+            # Catch empty messages
+            if not msg.text:
+                msg.text = ' '
             if not init:
                 self.slacker.chat.post_message(channel=self.bot_channels[group]['id'], text=msg.text, username=name.text)
         self.markers[group] = str(message['marker'])
