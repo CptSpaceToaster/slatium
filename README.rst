@@ -1,6 +1,8 @@
 slatium
 =======
 
+This project is currently WIP, and does not exist on pip yet!
+
 .. image:: https://img.shields.io/pypi/v/slatium.svg
     :target: https://pypi.python.org/pypi/slatium
 
