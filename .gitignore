@@ -1,0 +1,22 @@
+# Temporary Files
+*.swp
+*.log
+*.egg-info*
+*__pycache__*
+*~
+
+# Marker Files
+.hooks
+.requirements.txt
+.build
+.install
+.register
+.upload
+
+# Automatically Generated Configuration Files
+project.mk
+
+# Uneeded Directories
+venv
+build
+dist
