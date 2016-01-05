@@ -4,6 +4,7 @@ import websocket
 
 from .side import Side
 from ..dicts import Dualdict
+from pprint import pprint
 
 
 class SlackSide(Side):
@@ -23,6 +24,8 @@ class SlackSide(Side):
         for channel in rtm_response['channels']:
             self.channels.add(channel['id'], channel['name'], SlackChannel(**channel))
 
+        pprint(self.channels)
+
         self.websocket = websocket.WebSocketApp(rtm_response['url'], on_message=self.handle_event, on_error=self.handle_error)
         del self._target
         self._target = self.websocket.run_forever
@@ -37,8 +40,8 @@ class SlackSide(Side):
                 # Nahhh, still don't care
                 pass
 
-    def send_message(self, message, channel, name):
-        s_chan = self.get_channel_id(channel)
+    def send_message(self, message, channel, name='Slatium'):
+        s_chan = channel
         s_text = message
         s_name = name
         self.slacker.chat.post_message(channel=s_chan, text=s_text, username=s_name)
@@ -97,12 +100,15 @@ class SlackSide(Side):
         if subtype == 'bot_message' or subtype == 'message_changed' or user == 'USLACKBOT':
             return
         if channel.startswith('D'):
-            if text.lower() in ['restart', 'reload']:
+            cmd = text.lower()
+            if cmd in ['restart', 'reload']:
                 print('Reloading configuration')
                 self.close()
-            if text.lower() in ['stop', 'close']:
+            if cmd in ['stop', 'close']:
                 print('Stoping')
                 self.needs_exit.set()
+            if cmd in ['ping']:
+                self.send_message('pong', channel)
 
         if channel.startswith('C'):
             print('handling message')
