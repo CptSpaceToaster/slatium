@@ -1,20 +1,12 @@
-import threading
+import multiprocessing
 
 
-class Side(threading.Thread):
-    def __init__(self, name, watcher, callback, needs_exit, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.name = name
-        self.watcher = watcher
-        self.callback = callback
-        self.needs_exit = needs_exit
+class Side(multiprocessing.Process):
+    def recieve(self, channel, username, message):
+        self.ipc_queue.put(('message_recieve', [self.side_name, username, message]))
 
-    def send_message(self, message, channel, name):
+    def deliver(self, channel, username, message):
         raise NotImplementedError()
 
     def close(self):
         raise NotImplementedError()
-
-    def run(self):
-        self.watcher.watch(self.callback, self.name)
-        super().run()

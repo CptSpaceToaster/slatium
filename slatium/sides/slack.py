@@ -6,26 +6,31 @@ from .side import Side
 from ..dicts import Dualdict
 
 
+def a_function(api_token, ping_interval):
+    print('api_token: {0}'.format(api_token))
+    print('ping_interval: {0}'.format(ping_interval))
+    lacker = slacker.Slacker(api_token)
+
+    rtm_response = lacker.rtm.start().body
+
+    # Register Slack Users
+    users = Dualdict()
+    for user in rtm_response['users']:
+        users.add(user['id'], user['name'], SlackUser(**user))
+
+    # Register Slack Channels
+    channels = Dualdict()
+    for channel in rtm_response['channels']:
+        channels.add(channel['id'], channel['name'], SlackChannel(**channel))
+
+    websocket = websocket.WebSocketApp(rtm_response['url'], on_message=self.handle_event, on_error=self.handle_error)
+    del self._target
+    self._target = self.websocket.run_forever
+
+
 class SlackSide(Side):
-    def __init__(self, api_token, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.slacker = slacker.Slacker(api_token)
-
-        rtm_response = self.slacker.rtm.start().body
-
-        # Register Slack Users
-        self.users = Dualdict()
-        for user in rtm_response['users']:
-            self.users.add(user['id'], user['name'], SlackUser(**user))
-
-        # Register Slack Channels
-        self.channels = Dualdict()
-        for channel in rtm_response['channels']:
-            self.channels.add(channel['id'], channel['name'], SlackChannel(**channel))
-
-        self.websocket = websocket.WebSocketApp(rtm_response['url'], on_message=self.handle_event, on_error=self.handle_error)
-        del self._target
-        self._target = self.websocket.run_forever
 
     def close(self):
         # Attempt to close out of politeness
@@ -37,10 +42,10 @@ class SlackSide(Side):
                 # Nahhh, still don't care
                 pass
 
-    def send_message(self, message, channel, name):
+    def send_message(self, channel, username, message):
         s_chan = self.get_channel_id(channel)
+        s_name = username
         s_text = message
-        s_name = name
         self.slacker.chat.post_message(channel=s_chan, text=s_text, username=s_name)
 
     def handle_error(self, w_socket, exception):

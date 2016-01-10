@@ -10,7 +10,7 @@ MAIN = 'slatium.main:main'
 VERSION = '{0} v{1}'.format(__project__, __version__)
 DESCRIPTION = 'Bridge chat between Initium and Slack'
 
-MIN_PYTHON_VERSION = 3, 3
+MIN_PYTHON_VERSION = 3, 4
 
 if not sys.version_info >= MIN_PYTHON_VERSION:
     exit("Python {}.{}+ is required.".format(*MIN_PYTHON_VERSION))
@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 # Local
 try:
+    from .restartable import RestartableProcess
     from .sides import Side, SlackSide
     from dicts import Bidict, Dualdict
 except ImportError:
